@@ -1,0 +1,355 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ClickTime — Marketing Funnel Table</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 13px;
+    background: #ffffff;
+    color: #0b0b0b;
+    padding: 24px 20px 32px;
+    line-height: 1.5;
+  }
+
+  .header {
+    margin-bottom: 20px;
+  }
+  .header-top {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 4px;
+  }
+  .title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #0b0b0b;
+  }
+  .subtitle {
+    font-size: 12px;
+    color: #898781;
+  }
+
+  .table-wrap { overflow-x: auto; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12.5px;
+  }
+  thead tr:first-child th {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #52514e;
+    padding: 6px 10px 2px;
+    border-bottom: none;
+    text-align: right;
+    white-space: nowrap;
+  }
+  thead tr:first-child th:first-child { text-align: left; }
+  thead tr:last-child th {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #52514e;
+    padding: 2px 10px 8px;
+    border-bottom: 1.5px solid #d3d1c7;
+    text-align: right;
+    white-space: nowrap;
+  }
+  thead tr:last-child th:first-child { text-align: left; }
+  .grp-header {
+    text-align: center !important;
+    border-bottom: 1px solid #e8e6df !important;
+    padding-bottom: 3px !important;
+    color: #898781 !important;
+  }
+  .sep { border-left: 0.5px solid #e8e6df; }
+
+  tbody td {
+    padding: 8px 10px;
+    text-align: right;
+    border-bottom: 0.5px solid #eeede8;
+    color: #0b0b0b;
+    white-space: nowrap;
+  }
+  tbody td:first-child { text-align: left; }
+  tbody tr:last-child td { border-bottom: none; }
+
+  tbody tr.divider td { border-top: 1.5px solid #d3d1c7; }
+  tbody tr.current td { background: #f0f7ff; }
+
+  .dim { color: #b4b2a9; }
+  .em { font-weight: 600; }
+  .tbd { color: #898781; font-style: italic; }
+
+  .badge {
+    display: inline-block;
+    font-size: 9.5px;
+    padding: 1px 5px;
+    border-radius: 8px;
+    font-weight: 600;
+    margin-left: 4px;
+    vertical-align: middle;
+    line-height: 1.7;
+    white-space: nowrap;
+  }
+  .b-blue { background: #e6f1fb; color: #0c447c; }
+  .b-amber { background: #faeeda; color: #633806; }
+
+  .dot {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    margin-right: 3px;
+    vertical-align: middle;
+    flex-shrink: 0;
+  }
+
+  .yoy-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 16px;
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 0.5px solid #eeede8;
+    font-size: 11.5px;
+    color: #52514e;
+    align-items: center;
+  }
+  .yoy-label { font-weight: 600; color: #0b0b0b; }
+  .up { color: #0f6e56; font-weight: 600; }
+  .dn { color: #a32d2d; font-weight: 600; }
+
+  .notes {
+    margin-top: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 11px;
+    color: #898781;
+    line-height: 1.6;
+  }
+  .note-row { display: flex; gap: 6px; align-items: flex-start; }
+  .note-row .badge { margin-left: 0; flex-shrink: 0; margin-top: 1px; }
+
+  @media (prefers-color-scheme: dark) {
+    body { background: #1a1a19; color: #ffffff; }
+    .title { color: #ffffff; }
+    .subtitle { color: #898781; }
+    thead tr:first-child th { color: #c3c2b7; }
+    thead tr:last-child th { color: #c3c2b7; border-bottom-color: #444441; }
+    .grp-header { color: #898781 !important; border-bottom-color: #383835 !important; }
+    .sep { border-left-color: #383835; }
+    tbody td { border-bottom-color: #2c2c2a; color: #ffffff; }
+    tbody tr.divider td { border-top-color: #444441; }
+    tbody tr.current td { background: #0c2d4a; }
+    .dim { color: #5f5e5a; }
+    .b-blue { background: #0c447c; color: #b5d4f4; }
+    .b-amber { background: #633806; color: #fac775; }
+    .yoy-row { border-top-color: #2c2c2a; color: #c3c2b7; }
+    .yoy-label { color: #ffffff; }
+    .up { color: #5dcaa5; }
+    .dn { color: #f09595; }
+    .notes { color: #898781; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <span class="title">Marketing funnel — Jun 2025 to Jun 2026</span>
+    <span class="subtitle">Updated June 30, 2026</span>
+  </div>
+</div>
+
+<div class="table-wrap">
+<table>
+  <thead>
+    <tr>
+      <th rowspan="2" style="vertical-align:bottom;">Month</th>
+      <th rowspan="2" style="vertical-align:bottom;">Visits</th>
+      <th rowspan="2" style="vertical-align:bottom;">MQLs</th>
+      <th rowspan="2" style="vertical-align:bottom;">SALs</th>
+      <th colspan="4" class="grp-header sep">Marketing SQLs by seat tier</th>
+    </tr>
+    <tr>
+      <th class="sep"><span class="dot" style="background:#2a78d6;"></span>Large</th>
+      <th><span class="dot" style="background:#1baf7a;"></span>Med</th>
+      <th><span class="dot" style="background:#eda100;"></span>Small</th>
+      <th>Total</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Jun '25</td>
+      <td>13,771</td>
+      <td>54</td>
+      <td>12</td>
+      <td class="sep dim">0</td>
+      <td>3</td>
+      <td class="dim">0</td>
+      <td class="em">3</td>
+    </tr>
+    <tr>
+      <td>Jul '25</td>
+      <td>19,800</td>
+      <td>79</td>
+      <td>28</td>
+      <td class="sep dim">0</td>
+      <td>10</td>
+      <td>2</td>
+      <td class="em">12</td>
+    </tr>
+    <tr>
+      <td>Aug '25</td>
+      <td>12,922</td>
+      <td>71</td>
+      <td>21</td>
+      <td class="sep dim">0</td>
+      <td>4</td>
+      <td>2</td>
+      <td class="em">7</td>
+    </tr>
+    <tr>
+      <td>Sep '25</td>
+      <td>16,177</td>
+      <td>64</td>
+      <td>23</td>
+      <td class="sep">2</td>
+      <td>3</td>
+      <td>2</td>
+      <td class="em">8</td>
+    </tr>
+    <tr>
+      <td>Oct '25</td>
+      <td>18,487</td>
+      <td>68</td>
+      <td>23</td>
+      <td class="sep">4</td>
+      <td>5</td>
+      <td>3</td>
+      <td class="em">13</td>
+    </tr>
+    <tr>
+      <td>Nov '25</td>
+      <td>16,977</td>
+      <td>62</td>
+      <td>33</td>
+      <td class="sep">2</td>
+      <td>9</td>
+      <td>3</td>
+      <td class="em">15</td>
+    </tr>
+    <tr class="divider">
+      <td>Dec '25 <span class="badge b-blue">SEO pruning</span></td>
+      <td>14,009</td>
+      <td>43</td>
+      <td>14</td>
+      <td class="sep">1</td>
+      <td>2</td>
+      <td>1</td>
+      <td class="em">5</td>
+    </tr>
+    <tr>
+      <td>Jan '26</td>
+      <td>11,967</td>
+      <td>40</td>
+      <td>20</td>
+      <td class="sep">1</td>
+      <td>4</td>
+      <td>2</td>
+      <td class="em">8</td>
+    </tr>
+    <tr>
+      <td>Feb '26 <span class="badge b-amber">form gate</span></td>
+      <td>10,931</td>
+      <td>48</td>
+      <td>17</td>
+      <td class="sep">1</td>
+      <td>5</td>
+      <td>3</td>
+      <td class="em">11</td>
+    </tr>
+    <tr>
+      <td>Mar '26</td>
+      <td>15,557</td>
+      <td>57</td>
+      <td>21</td>
+      <td class="sep">3</td>
+      <td>7</td>
+      <td>6</td>
+      <td class="em">18</td>
+    </tr>
+    <tr>
+      <td>Apr '26</td>
+      <td>11,876</td>
+      <td>57</td>
+      <td>17</td>
+      <td class="sep">2</td>
+      <td>2</td>
+      <td>6</td>
+      <td class="em">11</td>
+    </tr>
+    <tr>
+      <td>May '26 <span class="badge b-amber">SAL anomaly</span></td>
+      <td>14,808</td>
+      <td>46</td>
+      <td>66</td>
+      <td class="sep">1</td>
+      <td>2</td>
+      <td>2</td>
+      <td class="em">6</td>
+    </tr>
+    <tr class="current divider">
+      <td>Jun '26</td>
+      <td>16,890</td>
+      <td>45</td>
+      <td>14</td>
+      <td class="sep">1</td>
+      <td>6</td>
+      <td>2</td>
+      <td class="em tbd">—</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<div class="yoy-row">
+  <span class="yoy-label">Jun '26 vs Jun '25 —</span>
+  <span>Visits <span class="up">+23%</span></span>
+  <span>MQLs <span class="dn">−17%</span></span>
+  <span>SALs <span class="up">+17%</span></span>
+</div>
+
+<div class="notes">
+  <div class="note-row">
+    <span class="badge b-blue">SEO pruning</span>
+    <span>Dec '25: removed low-quality legacy pages to eliminate unqualified traffic and concentrate SEO signal. Visits inflection begins here.</span>
+  </div>
+  <div class="note-row">
+    <span class="badge b-amber">form gate</span>
+    <span>Early Feb '26: added work email requirement to demo form and pulled back on broad ad experiments generating false MQLs. MQL count drops but quality improves — downstream SAL and SQL conversion holds steady.</span>
+  </div>
+  <div class="note-row">
+    <span class="badge b-amber">SAL anomaly</span>
+    <span>May '26: one-time manual event lead upload inflated SALs to 66. Not organic demand. Jun '26 returns to normal at 14.</span>
+  </div>
+  <div style="margin-top:2px;">SQLs use MQL create-date attribution (~14-day conversion lag). Jun '26 total deferred — may include non-marketing sources. Jumbo tier omitted (0–1/month throughout).</div>
+</div>
+
+</body>
+</html>
