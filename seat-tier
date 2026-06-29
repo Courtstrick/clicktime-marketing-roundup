@@ -1,0 +1,202 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ClickTime — SQL Seat Tier Chart</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 13px;
+    background: #ffffff;
+    color: #0b0b0b;
+    padding: 24px 20px 32px;
+    line-height: 1.5;
+  }
+
+  .header-top {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .title { font-size: 15px; font-weight: 600; color: #0b0b0b; }
+  .subtitle { font-size: 12px; color: #898781; }
+
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 16px;
+    margin-bottom: 12px;
+    font-size: 12px;
+    color: #52514e;
+  }
+  .legend-item { display: flex; align-items: center; gap: 5px; }
+  .swatch { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+
+  .chart-wrap { position: relative; width: 100%; height: 280px; }
+
+  .annotations {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 14px;
+    font-size: 11.5px;
+  }
+  .ann {
+    flex: 1;
+    min-width: 180px;
+    padding: 8px 12px;
+    background: #f7f6f2;
+    border-radius: 6px;
+    line-height: 1.55;
+  }
+  .ann-title { font-weight: 600; margin-bottom: 2px; }
+  .ann-blue { border-left: 2.5px solid #2a78d6; }
+  .ann-green { border-left: 2.5px solid #1baf7a; }
+
+  .note { margin-top: 10px; font-size: 11px; color: #898781; }
+
+  @media (prefers-color-scheme: dark) {
+    body { background: #1a1a19; color: #ffffff; }
+    .title { color: #ffffff; }
+    .subtitle { color: #898781; }
+    .legend { color: #c3c2b7; }
+    .ann { background: #242422; color: #c3c2b7; }
+    .ann-title { color: #ffffff; }
+    .note { color: #898781; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header-top">
+  <span class="title">Marketing SQLs by seat tier — Jun 2025 to Jun 2026</span>
+  <span class="subtitle">Updated June 30, 2026</span>
+</div>
+
+<div class="legend">
+  <div class="legend-item"><span class="swatch" style="background:#2a78d6;"></span>Large (100–300 seats)</div>
+  <div class="legend-item"><span class="swatch" style="background:#1baf7a;"></span>Medium (20–100 seats)</div>
+  <div class="legend-item"><span class="swatch" style="background:#eda100;"></span>Small (&lt;20 seats)</div>
+  <div class="legend-item"><span class="swatch" style="background:#4a3aa7;"></span>Jumbo</div>
+</div>
+
+<div class="chart-wrap">
+  <canvas id="tierChart" role="img" aria-label="Stacked bar chart of marketing SQL seat tier mix by month from June 2025 to June 2026. Large deals appear in small numbers, Medium is the consistent driver, Small increases in early 2026.">SQL tier mix Jun 2025–Jun 2026.</canvas>
+</div>
+
+<div class="annotations">
+  <div class="ann ann-blue">
+    <div class="ann-title">Large SQLs — the gap</div>
+    Running 1–3/month since Jan '26 against a ramp target scaling toward 27 Larges by Dec '26. Volume is real; large-seat mix is the priority to close.
+  </div>
+  <div class="ann ann-green">
+    <div class="ann-title">Medium recovering</div>
+    6 in Jun '26 vs. 2 in May — strongest Medium month since Nov '25. Demand is there; targeting upstream needs to skew larger.
+  </div>
+</div>
+
+<p class="note">Jun '26 SQL total deferred — may include non-marketing sources. SQLs use MQL create-date attribution (~14-day conversion lag).</p>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/3.0.1/chartjs-plugin-annotation.min.js"></script>
+<script>
+const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+const gridColor = isDark ? '#2c2c2a' : '#e8e6df';
+const tickColor = '#898781';
+
+const labels = ["Jun '25","Jul '25","Aug '25","Sep '25","Oct '25","Nov '25","Dec '25","Jan '26","Feb '26","Mar '26","Apr '26","May '26","Jun '26"];
+
+new Chart(document.getElementById('tierChart'), {
+  type: 'bar',
+  data: {
+    labels: labels,
+    datasets: [
+      {
+        label: 'Large',
+        data: [0, 0, 0, 2, 4, 2, 1, 1, 1, 3, 2, 1, 1],
+        backgroundColor: '#2a78d6',
+        borderWidth: 0
+      },
+      {
+        label: 'Medium',
+        data: [3, 10, 4, 3, 5, 9, 2, 4, 5, 7, 2, 2, 6],
+        backgroundColor: '#1baf7a',
+        borderWidth: 0
+      },
+      {
+        label: 'Small',
+        data: [0, 2, 2, 2, 3, 3, 1, 2, 3, 6, 6, 2, 2],
+        backgroundColor: '#eda100',
+        borderWidth: 0
+      },
+      {
+        label: 'Jumbo',
+        data: [0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0],
+        backgroundColor: '#4a3aa7',
+        borderWidth: 0
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    interaction: { mode: 'index', intersect: false },
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          footer: function(items) {
+            var total = items.reduce(function(s, i) { return s + i.parsed.y; }, 0);
+            return 'Total: ' + total;
+          }
+        }
+      },
+      annotation: {
+        annotations: {
+          targetLine: {
+            type: 'line',
+            yMin: 15,
+            yMax: 15,
+            borderColor: isDark ? 'rgba(42,120,214,0.4)' : 'rgba(42,120,214,0.3)',
+            borderWidth: 1.5,
+            borderDash: [4, 3],
+            label: {
+              display: true,
+              content: 'Large target ~15–16',
+              position: 'end',
+              backgroundColor: isDark ? '#0c2d4a' : '#e6f1fb',
+              color: isDark ? '#b5d4f4' : '#0c447c',
+              font: { size: 10 },
+              padding: { x: 6, y: 3 },
+              borderRadius: 4
+            }
+          }
+        }
+      }
+    },
+    scales: {
+      x: {
+        stacked: true,
+        ticks: { color: tickColor, font: { size: 11 }, maxRotation: 45, autoSkip: false },
+        grid: { display: false }
+      },
+      y: {
+        stacked: true,
+        max: 20,
+        ticks: { color: tickColor, font: { size: 11 }, stepSize: 5 },
+        grid: { color: gridColor, lineWidth: 1 },
+        border: { display: false }
+      }
+    }
+  }
+});
+</script>
+</body>
+</html>
