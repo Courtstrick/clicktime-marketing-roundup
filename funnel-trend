@@ -1,0 +1,258 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ClickTime — Funnel Trend Chart</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 13px;
+    background: #ffffff;
+    color: #0b0b0b;
+    padding: 24px 20px 32px;
+    line-height: 1.5;
+  }
+
+  .header-top {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .title { font-size: 15px; font-weight: 600; color: #0b0b0b; }
+  .subtitle { font-size: 12px; color: #898781; }
+
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 16px;
+    margin-bottom: 12px;
+    font-size: 12px;
+    color: #52514e;
+  }
+  .legend-item { display: flex; align-items: center; gap: 5px; }
+  .leg-line {
+    display: inline-flex;
+    align-items: center;
+    gap: 0;
+    width: 20px;
+    height: 12px;
+    position: relative;
+    flex-shrink: 0;
+  }
+  .leg-solid { width: 20px; height: 2px; display: inline-block; }
+  .leg-dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+
+  .chart-wrap { position: relative; width: 100%; height: 300px; }
+
+  .annotations {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 14px;
+    font-size: 11.5px;
+  }
+  .ann {
+    flex: 1;
+    min-width: 180px;
+    padding: 8px 12px;
+    background: #f7f6f2;
+    border-radius: 6px;
+    line-height: 1.55;
+  }
+  .ann-title { font-weight: 600; margin-bottom: 2px; }
+  .badge {
+    display: inline-block;
+    font-size: 9.5px;
+    padding: 1px 5px;
+    border-radius: 8px;
+    font-weight: 600;
+    margin-right: 4px;
+    vertical-align: middle;
+    line-height: 1.7;
+  }
+  .b-blue { background: #e6f1fb; color: #0c447c; }
+  .b-amber { background: #faeeda; color: #633806; }
+  .note { margin-top: 10px; font-size: 11px; color: #898781; }
+
+  @media (prefers-color-scheme: dark) {
+    body { background: #1a1a19; color: #ffffff; }
+    .title { color: #ffffff; }
+    .subtitle { color: #898781; }
+    .legend { color: #c3c2b7; }
+    .ann { background: #242422; }
+    .ann-title { color: #ffffff; }
+    .ann { color: #c3c2b7; }
+    .b-blue { background: #0c447c; color: #b5d4f4; }
+    .b-amber { background: #633806; color: #fac775; }
+    .note { color: #898781; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header-top">
+  <span class="title">Funnel trend — Jun 2025 to Jun 2026</span>
+  <span class="subtitle">Updated June 30, 2026</span>
+</div>
+
+<div class="legend">
+  <div class="legend-item">
+    <svg width="20" height="12" style="flex-shrink:0"><line x1="0" y1="6" x2="20" y2="6" stroke="#2a78d6" stroke-width="2"/><circle cx="10" cy="6" r="3.5" fill="#2a78d6"/></svg>
+    Unique visits (÷100)
+  </div>
+  <div class="legend-item">
+    <svg width="20" height="12" style="flex-shrink:0"><line x1="0" y1="6" x2="5" y2="6" stroke="#1baf7a" stroke-width="2"/><line x1="8" y1="6" x2="13" y2="6" stroke="#1baf7a" stroke-width="2"/><line x1="16" y1="6" x2="20" y2="6" stroke="#1baf7a" stroke-width="2"/><circle cx="10" cy="6" r="3.5" fill="#1baf7a"/></svg>
+    MQLs
+  </div>
+  <div class="legend-item">
+    <svg width="20" height="12" style="flex-shrink:0"><line x1="0" y1="6" x2="3" y2="6" stroke="#eda100" stroke-width="2"/><line x1="6" y1="6" x2="9" y2="6" stroke="#eda100" stroke-width="2"/><line x1="12" y1="6" x2="15" y2="6" stroke="#eda100" stroke-width="2"/><line x1="18" y1="6" x2="20" y2="6" stroke="#eda100" stroke-width="2"/><circle cx="10" cy="6" r="3.5" fill="#eda100"/></svg>
+    SALs
+  </div>
+</div>
+
+<div class="chart-wrap">
+  <canvas id="funnelChart" role="img" aria-label="Line chart showing unique visits divided by 100, MQLs, and SALs from June 2025 to June 2026. Visits rise from 138 to 169 with an inflection after December 2025 content pruning. MQLs drop after February 2026 form gate. SALs spike to 66 in May 2026 as an anomaly.">Funnel trend Jun 2025–Jun 2026.</canvas>
+</div>
+
+<div class="annotations">
+  <div class="ann">
+    <div class="ann-title"><span class="badge b-blue">SEO pruning</span> Dec '25</div>
+    Removed low-quality legacy pages to eliminate unqualified traffic and tighten SEO signals. Visits inflection begins here.
+  </div>
+  <div class="ann">
+    <div class="ann-title"><span class="badge b-amber">Form gate</span> Feb '26</div>
+    Added work email requirement to demo form; pulled back broad ad experiments generating false MQLs. MQL count drops, quality improves.
+  </div>
+  <div class="ann">
+    <div class="ann-title"><span class="badge b-amber">SAL anomaly</span> May '26</div>
+    One-time manual event lead upload inflated SALs to 66. Not organic demand. Jun '26 returns to normal at 14.
+  </div>
+</div>
+
+<p class="note">Visits divided by 100 to share a y-axis scale with MQLs and SALs.</p>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/3.0.1/chartjs-plugin-annotation.min.js"></script>
+<script>
+const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+const gridColor = isDark ? '#2c2c2a' : '#e8e6df';
+const tickColor = '#898781';
+
+const labels = ["Jun '25","Jul '25","Aug '25","Sep '25","Oct '25","Nov '25","Dec '25","Jan '26","Feb '26","Mar '26","Apr '26","May '26","Jun '26"];
+
+new Chart(document.getElementById('funnelChart'), {
+  type: 'line',
+  data: {
+    labels: labels,
+    datasets: [
+      {
+        label: 'Visits ÷100',
+        data: [138, 198, 129, 162, 185, 170, 140, 120, 109, 156, 119, 148, 169],
+        borderColor: '#2a78d6',
+        backgroundColor: isDark ? 'rgba(42,120,214,0.08)' : 'rgba(42,120,214,0.07)',
+        borderWidth: 2,
+        pointRadius: 4,
+        pointBackgroundColor: '#2a78d6',
+        pointBorderColor: isDark ? '#1a1a19' : '#ffffff',
+        pointBorderWidth: 2,
+        tension: 0.35,
+        fill: true,
+        borderDash: []
+      },
+      {
+        label: 'MQLs',
+        data: [54, 79, 71, 64, 68, 62, 43, 40, 48, 57, 57, 46, 45],
+        borderColor: '#1baf7a',
+        backgroundColor: 'transparent',
+        borderWidth: 2,
+        pointRadius: 4,
+        pointBackgroundColor: '#1baf7a',
+        pointBorderColor: isDark ? '#1a1a19' : '#ffffff',
+        pointBorderWidth: 2,
+        tension: 0.35,
+        borderDash: [5, 4]
+      },
+      {
+        label: 'SALs',
+        data: [12, 28, 21, 23, 23, 33, 14, 20, 17, 21, 17, 66, 14],
+        borderColor: '#eda100',
+        backgroundColor: 'transparent',
+        borderWidth: 2,
+        pointRadius: 4,
+        pointBackgroundColor: '#eda100',
+        pointBorderColor: isDark ? '#1a1a19' : '#ffffff',
+        pointBorderWidth: 2,
+        tension: 0.35,
+        borderDash: [2, 3]
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    interaction: { mode: 'index', intersect: false },
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: function(ctx) {
+            if (ctx.dataset.label === 'Visits ÷100') {
+              return ' Visits: ' + (ctx.parsed.y * 100).toLocaleString();
+            }
+            return ' ' + ctx.dataset.label + ': ' + ctx.parsed.y;
+          }
+        }
+      },
+      annotation: {
+        annotations: {
+          pruning: {
+            type: 'line',
+            xMin: "Dec '25",
+            xMax: "Dec '25",
+            borderColor: isDark ? 'rgba(42,120,214,0.4)' : 'rgba(42,120,214,0.3)',
+            borderWidth: 1.5,
+            borderDash: [4, 3]
+          },
+          formGate: {
+            type: 'line',
+            xMin: "Feb '26",
+            xMax: "Feb '26",
+            borderColor: isDark ? 'rgba(237,161,0,0.4)' : 'rgba(237,161,0,0.35)',
+            borderWidth: 1.5,
+            borderDash: [4, 3]
+          },
+          salSpike: {
+            type: 'point',
+            xValue: "May '26",
+            yValue: 66,
+            backgroundColor: 'rgba(237,161,0,0.12)',
+            borderColor: '#eda100',
+            borderWidth: 1.5,
+            radius: 10
+          }
+        }
+      }
+    },
+    scales: {
+      x: {
+        ticks: { color: tickColor, font: { size: 11 }, maxRotation: 45, autoSkip: false },
+        grid: { display: false }
+      },
+      y: {
+        ticks: { color: tickColor, font: { size: 11 } },
+        grid: { color: gridColor, lineWidth: 1 },
+        border: { display: false }
+      }
+    }
+  }
+});
+</script>
+</body>
+</html>
